@@ -3,11 +3,11 @@ require 'rails_helper'
 RSpec.describe User, type: :model do
 
   before(:each) do
-    @user = User.new(name: 'Example User', email: 'user@example.com')
+    @user = User.new(name: 'Example User', email: 'user@example.com', password: 'foobar', password_confirmation: 'foobar')
   end
   
   it "creates a valid user" do
-    @user = User.new(name: 'Example User', email: 'user@example.com')
+    @user = User.new(name: 'Example User', email: 'user@example.com', password: 'foobar', password_confirmation: 'foobar')
     expect(@user.valid?).to eq(true)
   end
 
@@ -47,5 +47,17 @@ RSpec.describe User, type: :model do
     duplicate_user.email = @user.email.upcase
     @user.save
     expect(duplicate_user.valid?).to eq(false)
+  end
+
+  it "password should be present" do 
+    @user.password = @user.password_confirmation = '    '
+    @user.save
+    expect(@user.valid?).to eq(false)
+  end
+
+  it "should have password not too small" do 
+    @user.password = @user.password_confirmation = 'aaaaa'
+    @user.save 
+    expect(@user.valid?).to eq(false)
   end
 end
